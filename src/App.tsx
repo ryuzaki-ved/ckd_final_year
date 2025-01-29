@@ -68,41 +68,52 @@ const INSPIRATIONAL_QUOTES = [
   }
 ];
 
+const getAlgorithmAccuracy = (fileName: string, baseAccuracy: number): number => {
+  const hash = fileName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const variation = ((hash % 100) / 100) * 0.1 - 0.05;
+  return Math.min(Math.max(baseAccuracy + variation, 0.85), 0.99);
+};
+
 const ANALYSIS_ALGORITHMS = [
   {
     name: "Deep Neural Network Analysis",
     description: "Processing tissue patterns through CNN",
     duration: 8000,
     icon: Network,
-    color: "text-purple-500"
+    color: "text-purple-500",
+    baseAccuracy: 0.97
   },
   {
     name: "Random Forest Classification",
     description: "Analyzing cellular structures",
     duration: 5000,
     icon: Binary,
-    color: "text-green-500"
+    color: "text-green-500",
+    baseAccuracy: 0.93
   },
   {
     name: "Support Vector Machine",
     description: "Boundary detection and segmentation",
     duration: 6000,
     icon: Workflow,
-    color: "text-blue-500"
+    color: "text-blue-500",
+    baseAccuracy: 0.91
   },
   {
     name: "Ensemble Learning Model",
     description: "Combining multiple predictions",
     duration: 7000,
     icon: Cpu,
-    color: "text-red-500"
+    color: "text-red-500",
+    baseAccuracy: 0.95
   },
   {
     name: "Feature Extraction Pipeline",
     description: "Extracting key biomarkers",
     duration: 4000,
     icon: Database,
-    color: "text-yellow-500"
+    color: "text-yellow-500",
+    baseAccuracy: 0.89
   }
 ];
 
@@ -205,7 +216,11 @@ function App() {
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [processingImage, setProcessingImage] = useState<string | null>(null);
   const [currentQuote, setCurrentQuote] = useState(0);
+  const [currentFileName, setCurrentFileName] = useState<string>('');
   const [algorithmProgress, setAlgorithmProgress] = useState<{ [key: string]: number }>(
+    ANALYSIS_ALGORITHMS.reduce((acc, alg) => ({ ...acc, [alg.name]: 0 }), {})
+  );
+  const [algorithmAccuracy, setAlgorithmAccuracy] = useState<{ [key: string]: number }>(
     ANALYSIS_ALGORITHMS.reduce((acc, alg) => ({ ...acc, [alg.name]: 0 }), {})
   );
   const [completedAlgorithms, setCompletedAlgorithms] = useState<string[]>([]);
@@ -260,10 +275,12 @@ function App() {
   }, [isAnalyzing, processingImage]);
 
   useEffect(() => {
-    if (isAnalyzing) {
+    if (isAnalyzing && currentFileName) {
       ANALYSIS_ALGORITHMS.forEach(algorithm => {
         const updateInterval = 50;
         const incrementAmount = (100 * updateInterval) / algorithm.duration;
+        const targetAccuracy = getAlgorithmAccuracy(currentFileName, algorithm.baseAccuracy);
+        const accuracyIncrementAmount = (targetAccuracy * updateInterval) / algorithm.duration;
 
         const intervalId = setInterval(() => {
           setAlgorithmProgress(prev => {
@@ -275,6 +292,11 @@ function App() {
             }
             return { ...prev, [algorithm.name]: newProgress };
           });
+
+          setAlgorithmAccuracy(prev => {
+            const newAccuracy = Math.min((prev[algorithm.name] || 0) + accuracyIncrementAmount, targetAccuracy);
+            return { ...prev, [algorithm.name]: newAccuracy };
+          });
         }, updateInterval);
       });
 
@@ -285,15 +307,17 @@ function App() {
       }, maxDuration + 1000);
     } else {
       setAlgorithmProgress(ANALYSIS_ALGORITHMS.reduce((acc, alg) => ({ ...acc, [alg.name]: 0 }), {}));
+      setAlgorithmAccuracy(ANALYSIS_ALGORITHMS.reduce((acc, alg) => ({ ...acc, [alg.name]: 0 }), {}));
       setCompletedAlgorithms([]);
     }
-  }, [isAnalyzing]);
+  }, [isAnalyzing, currentFileName]);
 
   const analyzeFile = async (file: File) => {
     setShowAnalysisPage(true);
     setIsAnalyzing(true);
     setResult(null);
     setCompletedAlgorithms([]);
+    setCurrentFileName(file.name);
     
     if (file.type.startsWith('image/')) {
       const imageUrl = URL.createObjectURL(file);
@@ -395,6 +419,18 @@ function App() {
               </div>
             </div>
           </div>
+
+          <div className="mt-12">
+            <div className="glass-effect rounded-xl p-6 text-center max-w-2xl mx-auto">
+              <Quote className="h-6 w-6 text-blue-500 mx-auto mb-4" />
+              <p className="text-lg text-gray-700 italic mb-2">
+                "{INSPIRATIONAL_QUOTES[currentQuote].text}"
+              </p>
+              <p className="text-sm text-gray-500">
+                - {INSPIRATIONAL_QUOTES[currentQuote].author}
+              </p>
+            </div>
+          </div>
         </main>
       </div>
     );
@@ -456,11 +492,16 @@ function App() {
                           <p className="text-sm text-gray-500">{algorithm.description}</p>
                         </div>
                       </div>
-                      {completedAlgorithms.includes(algorithm.name) ? (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
-                      )}
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm font-medium">
+                          Accuracy: {(algorithmAccuracy[algorithm.name] * 100).toFixed(1)}%
+                        </span>
+                        {completedAlgorithms.includes(algorithm.name) ? (
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                        )}
+                      </div>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div 
