@@ -1,0 +1,24 @@
+age: Age
+bp: Blood Pressure
+sg: Specific Gravity
+al: Albumin
+su: Sugar (Glucose)
+rbc: Red Blood Cells
+pc: Pus Cells
+pcc: Pus Cell Clumps
+ba: Bacteria
+bgr: Blood Glucose Random
+bu: Blood Urea
+sc: Serum Creatinine
+sod: Sodium
+pot: Potassium
+hemo: Hemoglobin
+pcv: Packed Cell Volume
+wc: White Blood Cells
+rc: Red Blood Cells Count
+htn: Hypertension
+dm: Diabetes Mellitus
+cad: Coronary Artery Disease
+appet: Appetite
+pe: Pedal Edema
+ane: Anemia
