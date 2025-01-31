@@ -48,6 +48,12 @@
   from { width: 0%; }
 }
 
+@keyframes quotesFade {
+  0%, 85% { opacity: 1; transform: translateY(0); }
+  90%, 95% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 /* Custom Classes */
 .glass-effect {
   background: rgba(255, 255, 255, 0.8);
@@ -107,4 +113,8 @@
 .animate-gradient-x {
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
+}
+
+.quotes-transition {
+  animation: quotesFade 5s ease-in-out;
 }

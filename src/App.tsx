@@ -280,7 +280,11 @@ function App() {
         const updateInterval = 50;
         const incrementAmount = (100 * updateInterval) / algorithm.duration;
         const targetAccuracy = getAlgorithmAccuracy(currentFileName, algorithm.baseAccuracy);
-        const accuracyIncrementAmount = (targetAccuracy * updateInterval) / algorithm.duration;
+        
+        // Start from 76% and increment to target accuracy
+        const startingAccuracy = 0.76;
+        const accuracyRange = targetAccuracy - startingAccuracy;
+        const accuracyIncrementAmount = (accuracyRange * updateInterval) / algorithm.duration;
 
         const intervalId = setInterval(() => {
           setAlgorithmProgress(prev => {
@@ -294,7 +298,8 @@ function App() {
           });
 
           setAlgorithmAccuracy(prev => {
-            const newAccuracy = Math.min((prev[algorithm.name] || 0) + accuracyIncrementAmount, targetAccuracy);
+            const currentAccuracy = prev[algorithm.name] || startingAccuracy;
+            const newAccuracy = Math.min(currentAccuracy + accuracyIncrementAmount, targetAccuracy);
             return { ...prev, [algorithm.name]: newAccuracy };
           });
         }, updateInterval);
@@ -307,7 +312,7 @@ function App() {
       }, maxDuration + 1000);
     } else {
       setAlgorithmProgress(ANALYSIS_ALGORITHMS.reduce((acc, alg) => ({ ...acc, [alg.name]: 0 }), {}));
-      setAlgorithmAccuracy(ANALYSIS_ALGORITHMS.reduce((acc, alg) => ({ ...acc, [alg.name]: 0 }), {}));
+      setAlgorithmAccuracy(ANALYSIS_ALGORITHMS.reduce((acc, alg) => ({ ...acc, [alg.name]: 0.76 }), {}));
       setCompletedAlgorithms([]);
     }
   }, [isAnalyzing, currentFileName]);
@@ -423,12 +428,14 @@ function App() {
           <div className="mt-12">
             <div className="glass-effect rounded-xl p-6 text-center max-w-2xl mx-auto">
               <Quote className="h-6 w-6 text-blue-500 mx-auto mb-4" />
-              <p className="text-lg text-gray-700 italic mb-2">
-                "{INSPIRATIONAL_QUOTES[currentQuote].text}"
-              </p>
-              <p className="text-sm text-gray-500">
-                - {INSPIRATIONAL_QUOTES[currentQuote].author}
-              </p>
+              <div key={currentQuote} className="quotes-transition">
+                <p className="text-lg text-gray-700 italic mb-2">
+                  "{INSPIRATIONAL_QUOTES[currentQuote].text}"
+                </p>
+                <p className="text-sm text-gray-500">
+                  - {INSPIRATIONAL_QUOTES[currentQuote].author}
+                </p>
+              </div>
             </div>
           </div>
         </main>
