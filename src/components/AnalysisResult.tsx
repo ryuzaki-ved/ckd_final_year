@@ -60,26 +60,28 @@ export function AnalysisResult({ result }: AnalysisResultProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Tissue Analysis</h3>
-            <ul className="space-y-3">
-              {[
-                { label: 'Swelling', value: result.hasSwelling },
-                { label: 'Shrinkage', value: result.hasShrinkage },
-                { label: 'Pores', value: result.hasPores }
-              ].map((item, index) => (
-                <li key={index} className="transform transition-all duration-300 hover:translate-x-2">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-white shadow-sm">
-                    <span className="font-medium">{item.label}</span>
-                    <div className={`flex items-center ${item.value ? 'text-red-500' : 'text-green-500'}`}>
-                      <span className={`w-3 h-3 rounded-full mr-2 ${item.value ? 'bg-red-500' : 'bg-green-500'} animate-pulse`}></span>
-                      {item.value ? 'Detected' : 'Not Detected'}
+          {result.isImage && (
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">Tissue Analysis</h3>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Swelling', value: result.hasSwelling },
+                  { label: 'Shrinkage', value: result.hasShrinkage },
+                  { label: 'Pores', value: result.hasPores }
+                ].map((item, index) => (
+                  <li key={index} className="transform transition-all duration-300 hover:translate-x-2">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-white shadow-sm">
+                      <span className="font-medium">{item.label}</span>
+                      <div className={`flex items-center ${item.value ? 'text-red-500' : 'text-green-500'}`}>
+                        <span className={`w-3 h-3 rounded-full mr-2 ${item.value ? 'bg-red-500' : 'bg-green-500'} animate-pulse`}></span>
+                        {item.value ? 'Detected' : 'Not Detected'}
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div>
             <h3 className="font-semibold text-lg mb-4">CKD Assessment</h3>
