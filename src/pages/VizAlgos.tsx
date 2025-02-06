@@ -394,8 +394,6 @@ const VizAlgos = () => {
       // Draw margin lines
       ctx.beginPath();
       ctx.moveTo(centerX - Math.cos(angle) * 220, centerY - Math.sin(angle) * 220);
-      ctx.lineTo(centerX + Math.cos(angle) * 220, centerY + Math Continuing the VizAlgos.tsx file content exactly where it left off:
-
       ctx.lineTo(centerX + Math.cos(angle) * 220, centerY + Math.sin(angle) * 220);
       ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
       ctx.lineWidth = 1;
@@ -688,6 +686,7 @@ const VizAlgos = () => {
             >
               <div className="flex flex-col items-center text-center">
                 {React.createElement(algo.icon, {
+                  className ```
                   className: `h-8 w-8 ${algo.color} mb-2`,
                 })}
                 <h3 className="font-medium text-sm">{algo.name}</h3>
